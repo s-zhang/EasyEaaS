@@ -1,2 +1,2 @@
 # EasyEaaS
-Simple Javascript Code Evaluation as a Service
+A simple Javascript code evaluation endpoint as a service
