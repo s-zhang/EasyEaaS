@@ -5,7 +5,7 @@ node_js:
 cache:
   directories:
     - "$HOME/.npm"
-script:
+after_success:
   - npm run cov:send
   - npm run cov:check
 before_deploy:
