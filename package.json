@@ -1,7 +1,7 @@
 {
   "name": "easy-eaas",
   "version": "1.0.0",
-  "description": "A simple Javascript code evaluation endpoint as a service",
+  "description": "A simple Javascript code evaluation service",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
