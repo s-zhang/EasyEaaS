@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
 
-import { AppVersion } from '../models/AppVersion';
+import EvalRequestData from '../models/EvalRequestData';
 
-/**
- * GET /
- * Provide application information.
- */
-export const getRoot = (req: Request, res: Response) => {
-  res.json(new AppVersion('1.0'));
-};
+function postEval(req: Request, res: Response) {
+  const data = req.body as EvalRequestData;
+  console.log(`Evaluating: ${data.code}`);
+  const value = eval(data.code);
+  console.log(`Result: ${value}`);
+  res.json(value);
+}
+
+export { postEval };
