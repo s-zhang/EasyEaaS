@@ -1,13 +1,15 @@
 sudo: false
 language: node_js
 node_js:
-  - '10'
-  - '12'
-  - '14'
-# keep the npm cache to speed up installs
+- '10'
+- '12'
+- '14'
 cache:
   directories:
-    - '$HOME/.npm'
+  - "$HOME/.npm"
 after_success:
-  - npm run cov:send
-  - npm run cov:check
+- npm run cov:send
+- npm run cov:check
+before_install:
+- openssl aes-256-cbc -K $encrypted_3cc613782dd5_key -iv $encrypted_3cc613782dd5_iv
+  -in selfhost.ppk.enc -out ./selfhost.ppk -d
