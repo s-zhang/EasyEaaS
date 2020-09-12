@@ -8,6 +8,8 @@ cache:
 after_success:
   - npm run cov:send
   - npm run cov:check
+addons:
+  ssh_known_hosts: stevenzps.duckdns.org
 before_deploy:
   - openssl aes-256-cbc -K $encrypted_2e936ba8e06e_key -iv $encrypted_2e936ba8e06e_iv
     -in selfhost.enc -out ./selfhost -d
