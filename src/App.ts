@@ -13,7 +13,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
 /* Mount REST API routes */
-router.post('/', RootController.postEval);
+router.post('/eval', RootController.postEval);
 
 const app: express.Express = express();
 app.use('/api', router);

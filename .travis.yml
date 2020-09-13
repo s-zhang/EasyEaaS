@@ -4,10 +4,11 @@ node_js:
   - '12'
 cache:
   directories:
-    - "$HOME/.npm"
+    - '$HOME/.npm'
 after_success:
   - npm run cov:send
   - npm run cov:check
+  - npm run dist
 addons:
   ssh_known_hosts: stevenzps.duckdns.org
 before_deploy:
@@ -19,6 +20,6 @@ before_deploy:
 deploy:
   provider: script
   skip_cleanup: true
-  script: ssh szh10000@stevenzps.duckdns.org -i ./selfhost ls
+  script: ./deploy.sh
   on:
     branch: master
