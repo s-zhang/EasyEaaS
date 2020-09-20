@@ -25,5 +25,16 @@
       "outputCapture": "std",
       "skipFiles": ["<node_internals>/**/*.js"]
       // "smartStep": true
-    }]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug run",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "run"],
+      "outputCapture": "std",
+      "skipFiles": ["<node_internals>/**/*.js"]
+      // "smartStep": true
+    }
+  ]
 }

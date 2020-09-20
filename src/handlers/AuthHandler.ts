@@ -11,7 +11,7 @@ abstract class AuthHandler {
       if (this.verify(request)) {
         next();
       } else {
-        response.status(401);
+        response.status(401).end();
       }
     });
   }

@@ -15,13 +15,27 @@ class App {
     this.config = config;
   }
   setup(): express.Express {
-    const router: express.Router = express.Router();
+    const app: express.Express = express();
+
     /* Secure with Helmet */
-    router.use(helmet());
+    app.use(helmet());
 
     /* Parse request bodies as JSON */
-    router.use(bodyParser.urlencoded({ extended: false }));
-    router.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
+
+    const handlers = [
+      new TrelloWebhookAuthHandler(
+        '/api/trello',
+        this.config.trelloApiKey.token,
+        'https://stevenzps.duckdns.org'
+      ),
+    ];
+    for (const handler of handlers) {
+      handler.mount(app);
+    }
+
+    const router: express.Router = express.Router();
 
     /* Mount REST API routes */
     const controllers: IController[] = [
@@ -32,18 +46,6 @@ class App {
       controller.mount(router);
     }
 
-    const handlers = [
-      new TrelloWebhookAuthHandler(
-        '/trello',
-        this.config.trelloApiKey.token,
-        'https://stevenzps.duckdns.org/api/trello/'
-      ),
-    ];
-    for (const handler of handlers) {
-      handler.mount(router);
-    }
-
-    const app: express.Express = express();
     app.use('/api', router);
     return app;
   }

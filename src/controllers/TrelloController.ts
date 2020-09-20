@@ -15,11 +15,12 @@ class TrelloController implements IController {
       '5f617bde481a1388b148fa5e',
       '5cc281d42cb4bd329417bcc4'
     );
-    response.status(200);
+    response.end();
   }
   echo(request: Request, response: Response) {
-    console.log(JSON.stringify(request.body));
-    response.status(200);
+    const body = JSON.stringify(request.body);
+    console.log(body);
+    response.end(body);
   }
 
   mount(router: Router): void {
