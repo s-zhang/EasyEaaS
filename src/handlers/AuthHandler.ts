@@ -12,7 +12,11 @@ abstract class AuthHandler {
   ): // eslint-disable-next-line @typescript-eslint/no-explicit-any
   any;
   mount(router: Router): void {
-    router.use(this.path, this.handler);
+    router.use(
+      this.path,
+      (request: Request, response: Response, next: NextFunction) =>
+        this.handler(request, response, next)
+    );
   }
 }
 
