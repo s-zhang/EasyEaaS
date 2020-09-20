@@ -27,7 +27,7 @@ class App {
     const handlers = [
       new TrelloWebhookAuthHandler(
         '/api/trello',
-        this.config.trelloApiKey.token,
+        this.config.trelloApiKey.oauthSecret,
         'https://stevenzps.duckdns.org'
       ),
     ];

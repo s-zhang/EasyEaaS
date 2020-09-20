@@ -5,7 +5,7 @@ import App from './App';
 import AppConfig from './models/AppConfig';
 import TrelloApiKey from './models/TrelloApiKey';
 
-const app = new App(new AppConfig(0, new TrelloApiKey('', ''))).setup();
+const app = new App(new AppConfig(0, new TrelloApiKey('', '', ''))).setup();
 
 test('TestEval', async (t) => {
   const response = await request(app)

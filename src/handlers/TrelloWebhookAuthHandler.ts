@@ -5,11 +5,11 @@ import { NextFunction, Request, Response } from 'express';
 import AuthHandler from './AuthHandler';
 
 class TrelloWebhookAuthHandler extends AuthHandler {
-  private readonly token: string;
+  private readonly secret: string;
   private readonly baseUrl: string;
-  constructor(path: string, token: string, baseUrl: string) {
+  constructor(path: string, secret: string, baseUrl: string) {
     super(path);
-    this.token = token;
+    this.secret = secret;
     this.baseUrl = baseUrl;
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,7 +18,7 @@ class TrelloWebhookAuthHandler extends AuthHandler {
       JSON.stringify(request.body) + `${this.baseUrl}${request.originalUrl}`;
     console.log(`TrelloWebhookAuthHandler: content to hash: ${content}`);
     const doubleHash = crypto
-      .createHmac('sha1', this.token)
+      .createHmac('sha1', this.secret)
       .update(content)
       .digest('base64');
     console.log(`TrelloWebhookAuthHandler: actual hash: ${doubleHash}`);

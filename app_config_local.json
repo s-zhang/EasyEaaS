@@ -2,6 +2,7 @@
   "port": 3000,
   "trelloApiKey": {
     "key": "fake_key",
-    "token": "fake_token"
+    "token": "fake_token",
+    "oauthSecret": "fake_secret"
   }
 }
