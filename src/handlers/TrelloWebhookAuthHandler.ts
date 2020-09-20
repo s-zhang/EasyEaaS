@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 import AuthHandler from './AuthHandler';
 
@@ -12,7 +12,8 @@ class TrelloWebhookAuthHandler extends AuthHandler {
     this.token = token;
     this.baseUrl = baseUrl;
   }
-  verify(request: Request): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  handler(request: Request, response: Response, next: NextFunction): any {
     const content =
       JSON.stringify(request.body) + `${this.baseUrl}${request.originalUrl}`;
     console.log(`TrelloWebhookAuthHandler: content to hash: ${content}`);
@@ -23,7 +24,11 @@ class TrelloWebhookAuthHandler extends AuthHandler {
     console.log(`TrelloWebhookAuthHandler: actual hash: ${doubleHash}`);
     const headerHash = request.headers['x-trello-webhook'];
     console.log(`TrelloWebhookAuthHandler: given hash: ${headerHash}`);
-    return doubleHash == headerHash;
+    if (doubleHash == headerHash) {
+      next();
+    } else {
+      response.status(200).end('Auth failed');
+    }
   }
 }
 

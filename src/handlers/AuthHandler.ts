@@ -1,19 +1,18 @@
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 
 abstract class AuthHandler {
   protected readonly path: string;
   protected constructor(path: string) {
     this.path = path;
   }
-  protected abstract verify(request: Request): boolean;
+  protected abstract handler(
+    request: Request,
+    response: Response,
+    next: NextFunction
+  ): // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  any;
   mount(router: Router): void {
-    router.use(this.path, (request: Request, response: Response, next) => {
-      if (this.verify(request)) {
-        next();
-      } else {
-        response.status(401).end();
-      }
-    });
+    router.use(this.path, this.handler);
   }
 }
 
