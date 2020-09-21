@@ -13,12 +13,11 @@ class TrelloClient implements ITrelloClient {
     this.trelloAuthParams = `key=${trelloApiKey.key}&token=${trelloApiKey.token}`;
   }
   async moveCardToList(cardId: string, listId: string): Promise<void> {
-    await axios.post(
-      `${this.trelloEndpoint}/cards/${cardId}?${this.trelloAuthParams}`,
-      {
-        idList: listId,
-      }
-    );
+    const url = `${this.trelloEndpoint}/cards/${cardId}?${this.trelloAuthParams}`;
+    console.log(`TrelloClient: POST ${url}`);
+    await axios.put(url, {
+      idList: listId,
+    });
   }
 }
 

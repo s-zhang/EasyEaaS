@@ -11,22 +11,27 @@ class TrelloController implements IController {
   constructor(trelloClient: ITrelloClient) {
     this.trelloClient = trelloClient;
   }
-  async test(request: Request, response: Response) {
+  async boardWebhookListener(
+    request: Request,
+    response: Response
+  ): Promise<void> {
     const webhook = request.body as BoardWebhook;
+    console.log(`Webhook triggered. ${(JSON.stringify(webhook), null, 4)}`);
     switch (webhook.action.type) {
       case 'updateCard':
         if (webhook.action.data.card && webhook.action.data.list) {
           const card = webhook.action.data.card;
           const list = webhook.action.data.list;
           if (card.due) {
+            const dueDate = new Date(card.due);
             const now = new Date(Date.now());
-            if (this.getMondayOfWeek(card.due) <= now) {
+            if (this.getMondayOfWeek(dueDate) <= now) {
               this.moveCardToListIfNeeded(
                 card.id,
                 list.id,
                 '5cc282385eabf6760947aa4a' // this week
               );
-            } else if (card.due < this.addDays(now, 30)) {
+            } else if (dueDate < this.addDays(now, 30)) {
               this.moveCardToListIfNeeded(
                 card.id,
                 list.id,
@@ -69,7 +74,7 @@ class TrelloController implements IController {
   }
 
   echo(request: Request, response: Response) {
-    const body = JSON.stringify(request.body);
+    const body = JSON.stringify(request.body, null, 4);
     console.log(body);
     response.end(body);
   }
@@ -85,7 +90,12 @@ class TrelloController implements IController {
   }
 
   mount(router: Router): void {
-    router.post('/trello/test', asyncHandler(this.test));
+    router.post(
+      '/trello/board_webhook',
+      asyncHandler((request: Request, response: Response) =>
+        this.boardWebhookListener(request, response)
+      )
+    );
     router.post('/trello/echo', this.echo);
   }
 }

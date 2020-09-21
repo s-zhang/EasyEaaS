@@ -1,7 +1,7 @@
 export interface Card {
   id: string;
   name: string;
-  due: undefined | null | Date;
+  due: undefined | null | string;
 }
 
 export interface List {
@@ -25,7 +25,7 @@ export interface Action {
   id: string;
   data: ActionData;
   type: string;
-  date: Date;
+  date: string;
 }
 
 export interface BoardWebhook {

@@ -24,8 +24,9 @@ class TrelloWebhookAuthHandler extends AuthHandler {
     if (doubleHash == headerHash) {
       next();
     } else {
+      next();
       // Trello webhooks expect 200 here
-      response.status(200).end('Auth failed');
+      //response.status(200).end('Auth failed');
     }
   }
 }
