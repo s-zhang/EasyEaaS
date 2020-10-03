@@ -25,7 +25,13 @@ class TrelloController implements IController {
           if (card.due) {
             const dueDate = new Date(card.due);
             const now = new Date(Date.now());
-            if (this.getMondayOfWeek(dueDate) <= now) {
+            if (this.isSameDay(dueDate, now)) {
+              this.moveCardToListIfNeeded(
+                card.id,
+                list.id,
+                '5f78cb57892f002ebcb88a28' // today
+              );
+            } else if (this.getMondayOfWeek(dueDate) <= now) {
               this.moveCardToListIfNeeded(
                 card.id,
                 list.id,
@@ -71,6 +77,14 @@ class TrelloController implements IController {
     const newDate = new Date(date);
     newDate.setDate(newDate.getDate() + days);
     return newDate;
+  }
+
+  isSameDay(date1: Date, date2: Date): boolean {
+    return (
+      date1.getDate() == date2.getDate() &&
+      date1.getMonth() == date2.getMonth() &&
+      date2.getFullYear() == date2.getFullYear()
+    );
   }
 
   echo(request: Request, response: Response) {
