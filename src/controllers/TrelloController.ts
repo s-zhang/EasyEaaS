@@ -98,7 +98,12 @@ class TrelloController implements IController {
     fromListId: string,
     toListId: string
   ): Promise<void> {
-    if (fromListId != toListId) {
+    if (fromListId == toListId) {
+      console.log(`card ${cardId} already in list ${toListId}`);
+    } else {
+      console.log(
+        `Moving card ${cardId} from list ${fromListId} to list ${toListId}`
+      );
       await this.trelloClient.moveCardToList(cardId, toListId);
     }
   }
