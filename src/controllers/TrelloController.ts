@@ -26,7 +26,7 @@ class TrelloController implements IController {
           const card = webhook.action.data.card;
           const list = webhook.action.data.list;
           if (card.due) {
-            const dueDate = this.timeUtils.fromMillis(parseInt(card.due));
+            const dueDate = this.timeUtils.fromJSDate(new Date(card.due));
             const now = this.timeUtils.local();
             console.log(`Due date: ${dueDate}, now: ${now}`);
             if (dueDate.hasSame(now, 'day')) {
