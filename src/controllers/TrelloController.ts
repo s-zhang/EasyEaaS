@@ -25,6 +25,7 @@ class TrelloController implements IController {
           if (card.due) {
             const dueDate = new Date(card.due);
             const now = new Date(Date.now());
+            console.log(`Due date: ${dueDate}, now: ${now}`);
             if (this.isSameDay(dueDate, now)) {
               this.moveCardToListIfNeeded(
                 card.id,
