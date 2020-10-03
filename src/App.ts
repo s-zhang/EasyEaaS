@@ -6,6 +6,7 @@ import EvalController from './controllers/EvalController';
 import IController from './controllers/IController';
 import TrelloController from './controllers/TrelloController';
 import TrelloWebhookAuthHandler from './handlers/TrelloWebhookAuthHandler';
+import { TimeUtils } from './lib/TimeUtils';
 import { TrelloClient } from './lib/TrelloClient';
 import AppConfig from './models/AppConfig';
 
@@ -40,7 +41,10 @@ class App {
     /* Mount REST API routes */
     const controllers: IController[] = [
       new EvalController(),
-      new TrelloController(new TrelloClient(this.config.trelloApiKey)),
+      new TrelloController(
+        new TrelloClient(this.config.trelloApiKey),
+        new TimeUtils()
+      ),
     ];
     for (const controller of controllers) {
       controller.mount(router);

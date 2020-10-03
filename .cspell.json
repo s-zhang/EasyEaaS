@@ -20,6 +20,8 @@
         "exponentiate",
         "globby",
         "libauth",
+        "luxon",
+        "Millis",
         "mkdir",
         "openssl",
         "prettierignore",

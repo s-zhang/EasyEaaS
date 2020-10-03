@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
 
+import { ITimeUtils } from '../lib/TimeUtils';
 import { ITrelloClient } from '../lib/TrelloClient';
 import { BoardWebhook } from '../models/TrelloBoardWebhook';
 
@@ -8,8 +9,10 @@ import IController from './IController';
 
 class TrelloController implements IController {
   private readonly trelloClient: ITrelloClient;
-  constructor(trelloClient: ITrelloClient) {
+  private readonly timeUtils: ITimeUtils;
+  constructor(trelloClient: ITrelloClient, timeUtils: ITimeUtils) {
     this.trelloClient = trelloClient;
+    this.timeUtils = timeUtils;
   }
   async boardWebhookListener(
     request: Request,
@@ -23,22 +26,22 @@ class TrelloController implements IController {
           const card = webhook.action.data.card;
           const list = webhook.action.data.list;
           if (card.due) {
-            const dueDate = new Date(card.due);
-            const now = new Date(Date.now());
+            const dueDate = this.timeUtils.fromMillis(parseInt(card.due));
+            const now = this.timeUtils.local();
             console.log(`Due date: ${dueDate}, now: ${now}`);
-            if (this.isSameDay(dueDate, now)) {
+            if (dueDate.hasSame(now, 'day')) {
               this.moveCardToListIfNeeded(
                 card.id,
                 list.id,
                 '5f78cb57892f002ebcb88a28' // today
               );
-            } else if (this.getMondayOfWeek(dueDate) <= now) {
+            } else if (this.timeUtils.getMondayOfWeek(dueDate) <= now) {
               this.moveCardToListIfNeeded(
                 card.id,
                 list.id,
                 '5cc282385eabf6760947aa4a' // this week
               );
-            } else if (dueDate < this.addDays(now, 30)) {
+            } else if (dueDate < now.plus({ days: 30 })) {
               this.moveCardToListIfNeeded(
                 card.id,
                 list.id,
@@ -62,30 +65,6 @@ class TrelloController implements IController {
         break;
     }
     response.end();
-  }
-
-  getMondayOfWeek(date: Date): Date {
-    const thisMonday = new Date(date);
-    thisMonday.setHours(0);
-    thisMonday.setMinutes(0);
-    thisMonday.setSeconds(0);
-    thisMonday.setMilliseconds(0);
-    thisMonday.setDate(thisMonday.getDate() + 1 - thisMonday.getDay());
-    return thisMonday;
-  }
-
-  addDays(date: Date, days: number): Date {
-    const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + days);
-    return newDate;
-  }
-
-  isSameDay(date1: Date, date2: Date): boolean {
-    return (
-      date1.getDate() == date2.getDate() &&
-      date1.getMonth() == date2.getMonth() &&
-      date2.getFullYear() == date2.getFullYear()
-    );
   }
 
   echo(request: Request, response: Response) {
