@@ -37,9 +37,7 @@ interface ITrelloClient {
 class TrelloClient implements ITrelloClient {
   private readonly trelloEndpoint: string = 'https://api.trello.com/1';
   private readonly trelloAuthParams: string;
-  private readonly selfMemberId: string;
   constructor(trelloConfig: TrelloConfig) {
-    this.selfMemberId = trelloConfig.selfMemberId;
     this.trelloAuthParams = `key=${trelloConfig.key}&token=${trelloConfig.token}`;
   }
   async moveCardToList(cardId: string, listId: string): Promise<void> {
@@ -103,7 +101,7 @@ class TrelloClient implements ITrelloClient {
     return value;
   }
   async getBoards(): Promise<Board[]> {
-    const url = `${this.trelloEndpoint}/members/${this.selfMemberId}/boards?${this.trelloAuthParams}`;
+    const url = `${this.trelloEndpoint}/members/me/boards?${this.trelloAuthParams}`;
     console.log(`TrelloClient: GET ${url}`);
     const response = await axios.get<Board[]>(url);
     return response.data;

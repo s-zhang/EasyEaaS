@@ -5,7 +5,7 @@ import TrelloConfig from '../models/TrelloConfig';
 import { TimeUtils } from './TimeUtils';
 import { TrelloClient } from './TrelloClient';
 
-const trelloClient = new TrelloClient(new TrelloConfig('', '', '', ''));
+const trelloClient = new TrelloClient(new TrelloConfig('', '', ''));
 
 test('TestUpdateCustomFieldItemOnCard', async (t) => {
   await trelloClient.updateCustomFieldItemOnCard(
@@ -20,9 +20,8 @@ test('TestUpdateCustomFieldItemOnCard', async (t) => {
 test('TestGetBoards', async (t) => {
   const boards = await trelloClient.getBoards();
   for (const board of boards) {
-    console.log(board.name);
+    console.log(`${board.name}: ${board.id}`);
   }
-  console.log();
   t.pass();
 });
 
