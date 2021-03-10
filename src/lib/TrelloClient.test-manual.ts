@@ -5,48 +5,45 @@ import TrelloConfig from '../models/TrelloConfig';
 import { TimeUtils } from './TimeUtils';
 import { TrelloClient } from './TrelloClient';
 
+const trelloClient = new TrelloClient(new TrelloConfig('', '', '', ''));
 
-const trelloClient = new TrelloClient(
-  new TrelloConfig(
-    "",
-    "",
-    "",
-    "")
-);
-
-test('TestUpdateCustomFieldItemOnCard', async t => {  
+test('TestUpdateCustomFieldItemOnCard', async (t) => {
   await trelloClient.updateCustomFieldItemOnCard(
-    "603349c0a9fc7b72823ce9d3",
-    "6039735c1a0da10234ab1707",
-    "number",
-    "100")
+    '603349c0a9fc7b72823ce9d3',
+    '6039735c1a0da10234ab1707',
+    'number',
+    '100'
+  );
   t.pass();
 });
 
-test('TestGetBoards', async t => {
+test('TestGetBoards', async (t) => {
   const boards = await trelloClient.getBoards();
   for (const board of boards) {
     console.log(board.name);
   }
-  console.log()
+  console.log();
   t.pass();
 });
 
-test('TestGetCustomFieldsByName', async t => {
+test('TestGetCustomFieldsByName', async (t) => {
   const boards = await trelloClient.getBoards();
   let workBoard = null;
   for (const board of boards) {
-    if (board.name == "Work v2") {
+    if (board.name == 'Work v2') {
       workBoard = board;
     }
   }
   const boardId = workBoard!.id;
-  
-  const daysActiveField = await trelloClient.getCustomFieldsByName(boardId, "DA");
+
+  const daysActiveField = await trelloClient.getCustomFieldsByName(
+    boardId,
+    'DA'
+  );
   console.log(daysActiveField?.id);
   t.pass();
 });
 
-test('Test', async t => {
+test('Test', async (t) => {
   t.pass();
 });

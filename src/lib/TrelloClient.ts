@@ -1,7 +1,13 @@
 import axios from 'axios';
 
 import TrelloConfig from '../models/TrelloConfig';
-import { Board, Card, CustomField, CustomFieldItems, List } from '../models/TrelloModels';
+import {
+  Board,
+  Card,
+  CustomField,
+  CustomFieldItems,
+  List,
+} from '../models/TrelloModels';
 
 interface ITrelloClient {
   moveCardToList(cardId: string, listId: string): Promise<void>;
@@ -12,17 +18,19 @@ interface ITrelloClient {
     cardId: string,
     customFieldId: string,
     fieldType: string,
-    fieldValue: string): Promise<void>;
-  getCustomFieldsForBoard(
-    boardId: string): Promise<CustomField[]>;
+    fieldValue: string
+  ): Promise<void>;
+  getCustomFieldsForBoard(boardId: string): Promise<CustomField[]>;
   getCustomFieldsByName(
-    boardId: string, name: string): Promise<CustomField|undefined>;
-  getCustomFieldItemsOnCard(
-    cardId: string): Promise<CustomFieldItems[]>;
+    boardId: string,
+    name: string
+  ): Promise<CustomField | undefined>;
+  getCustomFieldItemsOnCard(cardId: string): Promise<CustomFieldItems[]>;
   getCustomFieldValueById<T>(
     cardId: string,
     customFieldId: string,
-    parser: (s: string) => T): Promise<T|undefined>;
+    parser: (s: string) => T
+  ): Promise<T | undefined>;
   getBoards(): Promise<Board[]>;
 }
 
@@ -45,24 +53,26 @@ class TrelloClient implements ITrelloClient {
     cardId: string,
     customFieldId: string,
     fieldType: string,
-    fieldValue: string): Promise<void> {
+    fieldValue: string
+  ): Promise<void> {
     const url = `${this.trelloEndpoint}/cards/${cardId}/customField/${customFieldId}/item?${this.trelloAuthParams}`;
     console.log(`TrelloClient: PUT ${url}`);
     await axios.put(url, {
       value: {
-        [fieldType]: fieldValue
-      }
+        [fieldType]: fieldValue,
+      },
     });
   }
-  async getCustomFieldsForBoard(
-    boardId: string): Promise<CustomField[]> {
+  async getCustomFieldsForBoard(boardId: string): Promise<CustomField[]> {
     const url = `${this.trelloEndpoint}/boards/${boardId}/customFields?${this.trelloAuthParams}`;
     console.log(`TrelloClient: GET ${url}`);
     const response = await axios.get<CustomField[]>(url);
     return response.data;
   }
   async getCustomFieldsByName(
-    boardId: string, name: string): Promise<CustomField|undefined> {
+    boardId: string,
+    name: string
+  ): Promise<CustomField | undefined> {
     const fields = await this.getCustomFieldsForBoard(boardId);
     let fieldWithName;
     for (const field of fields) {
@@ -72,8 +82,7 @@ class TrelloClient implements ITrelloClient {
     }
     return fieldWithName;
   }
-  async getCustomFieldItemsOnCard(
-    cardId: string): Promise<CustomFieldItems[]> {
+  async getCustomFieldItemsOnCard(cardId: string): Promise<CustomFieldItems[]> {
     const url = `${this.trelloEndpoint}/cards/${cardId}/customFieldItems?${this.trelloAuthParams}`;
     console.log(`TrelloClient: GET ${url}`);
     const response = await axios.get<CustomFieldItems[]>(url);
@@ -82,7 +91,8 @@ class TrelloClient implements ITrelloClient {
   async getCustomFieldValueById<T>(
     cardId: string,
     customFieldId: string,
-    parser: (s: string) => T): Promise<T|undefined> {
+    parser: (s: string) => T
+  ): Promise<T | undefined> {
     const allFieldItems = await this.getCustomFieldItemsOnCard(cardId);
     let value;
     for (const fieldItems of allFieldItems) {
