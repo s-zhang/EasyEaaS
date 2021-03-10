@@ -3,9 +3,9 @@ import request from 'supertest';
 
 import App from './App';
 import AppConfig from './models/AppConfig';
-import TrelloApiKey from './models/TrelloApiKey';
+import TrelloConfig from './models/TrelloConfig';
 
-const app = new App(new AppConfig(0, new TrelloApiKey('', '', ''))).setup();
+const app = new App(new AppConfig(0, new TrelloConfig('', '', '', ''))).setup();
 
 test('TestEval', async (t) => {
   const response = await request(app)

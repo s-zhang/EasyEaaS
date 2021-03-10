@@ -1,9 +1,9 @@
-import TrelloApiKey from './TrelloApiKey';
+import TrelloConfig from './TrelloConfig';
 
 class AppConfig {
   readonly port: number;
-  readonly trelloApiKey: TrelloApiKey;
-  constructor(port: number, trelloApiKey: TrelloApiKey) {
+  readonly trelloApiKey: TrelloConfig;
+  constructor(port: number, trelloApiKey: TrelloConfig) {
     this.port = port;
     this.trelloApiKey = trelloApiKey;
   }

@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 interface ITimeUtils {
   local(): DateTime;
   fromJSDate(date: Date): DateTime;
+  fromISO(dateString: string): DateTime;
   getMondayOfWeek(dateTime: DateTime): DateTime;
 }
 
@@ -14,6 +15,10 @@ class TimeUtils implements ITimeUtils {
 
   local(): DateTime {
     return DateTime.local().setZone(this.timezone);
+  }
+
+  fromISO(dateString: string): DateTime {
+    return DateTime.fromISO(dateString);
   }
 
   fromJSDate(date: Date): DateTime {

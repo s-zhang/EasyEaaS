@@ -1,6 +1,7 @@
 export interface Card {
   id: string;
   name: string;
+  idList: string;
   due: undefined | null | string;
 }
 
@@ -30,4 +31,15 @@ export interface Action {
 
 export interface BoardWebhook {
   action: Action;
+}
+
+export interface CustomField {
+  id: string;
+  name: string;
+}
+
+export interface CustomFieldItems {
+  id: string;
+  value: any;
+  idCustomField: string;
 }
