@@ -119,11 +119,17 @@ class TrelloClient implements ITrelloClient {
     const response = await axios.get<Board[]>(url);
     return response.data;
   }
-  getLists(boardId: string): Promise<List[]> {
-    throw new Error('Method not implemented.');
+  async getLists(boardId: string): Promise<List[]> {
+    const url = `${this.trelloEndpoint}/boards/${boardId}/lists?${this.trelloAuthParams}`;
+    console.log(`TrelloClient: GET ${url}`);
+    const response = await axios.get<List[]>(url);
+    return response.data;
   }
-  getCards(listId: string): Promise<Card[]> {
-    throw new Error('Method not implemented.');
+  async getCards(listId: string): Promise<Card[]> {
+    const url = `${this.trelloEndpoint}/lists/${listId}/cards?${this.trelloAuthParams}`;
+    console.log(`TrelloClient: GET ${url}`);
+    const response = await axios.get<Card[]>(url);
+    return response.data;
   }
 }
 

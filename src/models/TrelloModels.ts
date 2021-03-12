@@ -3,7 +3,7 @@ export interface Card {
   id: string;
   name: string;
   idList: string;
-  due: undefined | null | string;
+  due: undefined | string;
 }
 
 export interface List {
@@ -53,7 +53,7 @@ export interface CustomField {
 
 export interface CustomFieldItems {
   id: string;
-  value: Value | null;
+  value: Value | undefined;
   idCustomField: string;
 }
 
