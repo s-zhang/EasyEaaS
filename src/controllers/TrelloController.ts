@@ -152,7 +152,9 @@ class TrelloController implements IController {
   }
 
   mount(router: Router): void {
-    this.mountTrelloWebhook(router, 'board_webhook', this.boardWebhookListener);
+    this.mountTrelloWebhook(router, 'board_webhook', (req, res) =>
+      this.boardWebhookListener(req, res)
+    );
     router.post('/trello/echo', this.echo);
   }
 }
