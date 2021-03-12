@@ -1,10 +1,18 @@
 import axios from 'axios';
 
 import TrelloConfig from '../models/TrelloConfig';
-import { Board, CustomField, CustomFieldItems } from '../models/TrelloModels';
+import {
+  Board,
+  Card,
+  CustomField,
+  CustomFieldItems,
+  List,
+} from '../models/TrelloModels';
 
 interface ITrelloClient {
   moveCardToList(cardId: string, listId: string): Promise<void>;
+  getLists(boardId: string): Promise<List[]>;
+  getCards(listId: string): Promise<Card[]>;
   updateCustomFieldItemOnCard(
     cardId: string,
     customFieldId: string,
@@ -110,6 +118,12 @@ class TrelloClient implements ITrelloClient {
     console.log(`TrelloClient: GET ${url}`);
     const response = await axios.get<Board[]>(url);
     return response.data;
+  }
+  getLists(boardId: string): Promise<List[]> {
+    throw new Error('Method not implemented.');
+  }
+  getCards(listId: string): Promise<Card[]> {
+    throw new Error('Method not implemented.');
   }
 }
 
