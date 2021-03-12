@@ -139,13 +139,20 @@ class TrelloController implements IController {
     }
   }
 
+  private mountTrelloWebhook(
+    router: Router,
+    pathComponent: string,
+    listener: (request: Request, response: Response) => Promise<void>
+  ): void {
+    const path = `/trello/${pathComponent}`;
+    router.post(path, asyncHandler(listener));
+    router.head(path, (req, res) => {
+      res.sendStatus(200);
+    });
+  }
+
   mount(router: Router): void {
-    router.post(
-      '/trello/board_webhook',
-      asyncHandler((request: Request, response: Response) =>
-        this.boardWebhookListener(request, response)
-      )
-    );
+    this.mountTrelloWebhook(router, 'board_webhook', this.boardWebhookListener);
     router.post('/trello/echo', this.echo);
   }
 }

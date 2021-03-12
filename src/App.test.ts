@@ -15,3 +15,8 @@ test('TestEval', async (t) => {
   t.is(response.status, 200);
   t.is(response.body, 3);
 });
+
+test('TestTrelloWebHookHead', async (t) => {
+  const response = await request(app).head('/api/trello/board_webhook');
+  t.is(response.status, 200);
+});
