@@ -95,17 +95,19 @@ class TrelloController implements IController {
     daysActiveFieldId: string
   ): Promise<void> {
     //console.log(activeDate.toISO());
+    let value;
     if (activeDate) {
       const daysActive = Math.round(-activeDate.diffNow('day').days);
       //console.log(daysActive);
-
-      await this.trelloClient.updateCustomFieldItemOnCard(
-        cardId,
-        daysActiveFieldId,
-        'number',
-        `${daysActive}`
-      );
+      value = {
+        number: `${daysActive}`,
+      };
     }
+    await this.trelloClient.updateCustomFieldItemOnCard(
+      cardId,
+      daysActiveFieldId,
+      value
+    );
   }
 
   async updateAllCardsDaysActive(boardId: string): Promise<void> {

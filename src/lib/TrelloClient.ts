@@ -7,6 +7,7 @@ import {
   CustomField,
   CustomFieldItems,
   List,
+  Value,
 } from '../models/TrelloModels';
 
 interface ITrelloClient {
@@ -16,8 +17,7 @@ interface ITrelloClient {
   updateCustomFieldItemOnCard(
     cardId: string,
     customFieldId: string,
-    fieldType: string,
-    fieldValue: string
+    value: Value | undefined
   ): Promise<void>;
   getCustomFieldsForBoard(boardId: string): Promise<CustomField[]>;
   getCustomFieldsByName(
@@ -53,15 +53,12 @@ class TrelloClient implements ITrelloClient {
   async updateCustomFieldItemOnCard(
     cardId: string,
     customFieldId: string,
-    fieldType: string,
-    fieldValue: string
+    value: Value | undefined
   ): Promise<void> {
     const url = `${this.trelloEndpoint}/cards/${cardId}/customField/${customFieldId}/item?${this.trelloAuthParams}`;
     console.log(`TrelloClient: PUT ${url}`);
     await axios.put(url, {
-      value: {
-        [fieldType]: fieldValue,
-      },
+      value: value,
     });
   }
   async getCustomFieldsForBoard(boardId: string): Promise<CustomField[]> {

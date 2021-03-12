@@ -13,8 +13,9 @@ test('TestUpdateCustomFieldItemOnCard', async (t) => {
   await trelloClient.updateCustomFieldItemOnCard(
     '603349c0a9fc7b72823ce9d3',
     '6039735c1a0da10234ab1707',
-    'number',
-    '100'
+    {
+      number: '100',
+    }
   );
   t.pass();
 });
