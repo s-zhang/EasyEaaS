@@ -14,7 +14,7 @@
     "build:module": "tsc -p tsconfig.module.json",
     "run": "cross-env-shell \"nodemon build/main/index.js $INIT_CWD/app_config_local.json\"",
     "fix": "run-s fix:*",
-    "fix:prettier": "prettier \"src/**/*.ts\" --write",
+    "fix:prettier": "prettier \"src/**/*.ts\" --end-of-line auto --write",
     "fix:lint": "eslint src --ext .ts --fix",
     "test": "run-s build test:*",
     "test:lint": "eslint src --ext .ts",
