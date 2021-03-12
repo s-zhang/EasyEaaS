@@ -21,7 +21,7 @@ class TrelloController implements IController {
     response: Response
   ): Promise<void> {
     const webhook = request.body as BoardWebhook;
-    console.log(`Webhook triggered. ${(JSON.stringify(webhook), null, 4)}`);
+    console.log(`Webhook triggered. ${JSON.stringify(webhook, null, 4)}`);
     const board: Board = webhook.action.data.board;
     if (board.name.endsWith('[X]')) {
       switch (webhook.action.type) {
