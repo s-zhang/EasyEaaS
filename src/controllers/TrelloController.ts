@@ -152,6 +152,12 @@ class TrelloController implements IController {
     this.mountTrelloWebhook(router, 'board_webhook', (req, res) =>
       this.boardWebhookListener(req, res)
     );
+    router.post(
+      '/trello/update_days_active',
+      asyncHandler((req, res) =>
+        this.updateAllCardsDaysActive(req.query.boardId as string)
+      )
+    );
     router.post('/trello/echo', this.echo);
   }
 }
