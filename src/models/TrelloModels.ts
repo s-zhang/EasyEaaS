@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Card {
   id: string;
   name: string;
@@ -13,7 +14,6 @@ export interface List {
 export interface Board {
   id: string;
   name: string;
-  shortLink: string;
 }
 
 export interface ActionData {
@@ -22,24 +22,42 @@ export interface ActionData {
   board: Board;
 }
 
+export interface UpdateCustomFieldItemActionData {
+  customField: CustomField;
+  customFieldItem: ActionDataCustomFieldItems;
+  board: Board;
+  card: Card;
+}
+
+export interface Value {
+  [s: string]: string;
+}
+
 export interface Action {
   id: string;
-  data: ActionData;
+  data: any;
   type: string;
   date: string;
 }
 
 export interface BoardWebhook {
   action: Action;
+  model: Board;
 }
 
 export interface CustomField {
   id: string;
   name: string;
+  type: string;
 }
 
 export interface CustomFieldItems {
   id: string;
-  value: any;
+  value: Value | null;
   idCustomField: string;
+}
+
+export interface ActionDataCustomFieldItems extends CustomFieldItems {
+  idModel: string;
+  modelType: string;
 }

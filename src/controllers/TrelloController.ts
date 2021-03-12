@@ -5,7 +5,11 @@ import { DateTime } from 'luxon';
 
 import { ITimeUtils } from '../lib/TimeUtils';
 import { ITrelloClient } from '../lib/TrelloClient';
-import { Board, BoardWebhook, Card, List } from '../models/TrelloModels';
+import {
+  Board,
+  BoardWebhook,
+  UpdateCustomFieldItemActionData,
+} from '../models/TrelloModels';
 
 import IController from './IController';
 
@@ -22,15 +26,13 @@ class TrelloController implements IController {
   ): Promise<void> {
     const webhook = request.body as BoardWebhook;
     console.log(`Webhook triggered. ${JSON.stringify(webhook, null, 4)}`);
-    const board: Board = webhook.action.data.board;
+    const board: Board = webhook.model;
     if (board.name.endsWith('[X]')) {
       switch (webhook.action.type) {
         case 'updateCard':
-          if (webhook.action.data.card && webhook.action.data.list) {
-            const card: Card = webhook.action.data.card;
-            const list: List = webhook.action.data.list;
-            await this.cardUpdateHandler(card, list, board);
-          }
+          break;
+        case 'updateCustomFieldItem':
+          await this.updateDaysActiveUponActiveDateChange(webhook.action.data);
           break;
       }
     }
@@ -59,49 +61,39 @@ class TrelloController implements IController {
     }
   }
 
-  async cardUpdateHandler(card: Card, list: List, board: Board): Promise<void> {
-    await this.updateCardDaysActiveWithoutFieldIds(card.id, board.id);
+  async updateCustomFieldItemHandler(data: UpdateCustomFieldItemActionData) {
+    await this.updateDaysActiveUponActiveDateChange(data);
   }
 
-  async updateCardDaysActiveWithoutFieldIds(
-    cardId: string,
-    boardId: string
+  async updateDaysActiveUponActiveDateChange(
+    data: UpdateCustomFieldItemActionData
   ): Promise<void> {
-    /*const boards = await this.trelloClient.getBoards();
-    let workBoard = null;
-    for (const board of boards) {
-      if (board.name == "Work v2") {
-        workBoard = board;
-      }
+    if (data.customField.name != 'Active Date') {
+      return;
     }
-    
-    const boardId = workBoard!.id;*/
 
-    const activeDateField = await this.trelloClient.getCustomFieldsByName(
-      boardId,
-      'Active Date'
+    const activeDate = this.trelloClient.getCustomFieldValueFromItems<DateTime>(
+      data.customFieldItem,
+      this.timeUtils.fromISO
     );
+
     const daysActiveField = await this.trelloClient.getCustomFieldsByName(
-      boardId,
+      data.board.id,
       'DA'
     );
 
-    await this.updateCardDaysActiveIfNeeded(
-      cardId,
-      activeDateField!.id,
+    await this.updateDaysActiveIfNeeded(
+      data.card.id,
+      activeDate,
       daysActiveField!.id
     );
   }
 
-  async updateCardDaysActiveIfNeeded(
+  async updateDaysActiveIfNeeded(
     cardId: string,
-    activeDateFieldId: string,
+    activeDate: DateTime | undefined,
     daysActiveFieldId: string
   ): Promise<void> {
-    const activeDate = await this.trelloClient.getCustomFieldValueById<
-      DateTime
-    >(cardId, activeDateFieldId, this.timeUtils.fromISO);
-
     //console.log(activeDate.toISO());
     if (activeDate) {
       const daysActive = Math.round(-activeDate.diffNow('day').days);
@@ -130,9 +122,12 @@ class TrelloController implements IController {
     for (const list of lists) {
       const cards = await this.trelloClient.getCards(list.id);
       for (const card of cards) {
-        await this.updateCardDaysActiveIfNeeded(
+        const activeDate = await this.trelloClient.getCustomFieldValueById<
+          DateTime
+        >(card.id, activeDateField!.id, this.timeUtils.fromISO);
+        await this.updateDaysActiveIfNeeded(
           card.id,
-          activeDateField!.id,
+          activeDate,
           daysActiveField!.id
         );
       }

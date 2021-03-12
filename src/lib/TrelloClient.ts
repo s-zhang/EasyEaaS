@@ -1,19 +1,10 @@
 import axios from 'axios';
 
 import TrelloConfig from '../models/TrelloConfig';
-import {
-  Board,
-  Card,
-  CustomField,
-  CustomFieldItems,
-  List,
-} from '../models/TrelloModels';
+import { Board, CustomField, CustomFieldItems } from '../models/TrelloModels';
 
 interface ITrelloClient {
   moveCardToList(cardId: string, listId: string): Promise<void>;
-  getLists(boardId: string): Promise<List[]>;
-  getCards(listId: string): Promise<Card[]>;
-  updateCardDueDate(cardId: string, due: null | string): Promise<void>;
   updateCustomFieldItemOnCard(
     cardId: string,
     customFieldId: string,
@@ -31,6 +22,10 @@ interface ITrelloClient {
     customFieldId: string,
     parser: (s: string) => T
   ): Promise<T | undefined>;
+  getCustomFieldValueFromItems<T>(
+    fieldItems: CustomFieldItems,
+    parser: (s: string) => T
+  ): T | undefined;
   getBoards(): Promise<Board[]>;
 }
 
@@ -95,8 +90,18 @@ class TrelloClient implements ITrelloClient {
     let value;
     for (const fieldItems of allFieldItems) {
       if (fieldItems.idCustomField == customFieldId) {
-        value = parser(Object.values<string>(fieldItems.value)[0]);
+        value = this.getCustomFieldValueFromItems(fieldItems, parser);
       }
+    }
+    return value;
+  }
+  getCustomFieldValueFromItems<T>(
+    fieldItems: CustomFieldItems,
+    parser: (s: string) => T
+  ): T | undefined {
+    let value;
+    if (fieldItems.value) {
+      value = parser(Object.values<string>(fieldItems.value)[0]);
     }
     return value;
   }
@@ -105,15 +110,6 @@ class TrelloClient implements ITrelloClient {
     console.log(`TrelloClient: GET ${url}`);
     const response = await axios.get<Board[]>(url);
     return response.data;
-  }
-  getLists(boardId: string): Promise<List[]> {
-    throw new Error('Method not implemented.');
-  }
-  getCards(listId: string): Promise<Card[]> {
-    throw new Error('Method not implemented.');
-  }
-  updateCardDueDate(cardId: string, due: string | null): Promise<void> {
-    throw new Error('Method not implemented.');
   }
 }
 
