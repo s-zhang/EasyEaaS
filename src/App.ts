@@ -25,17 +25,6 @@ class App {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
-    const handlers = [
-      new TrelloWebhookAuthHandler(
-        '/api/trello',
-        this.config.trelloApiKey.oauthSecret,
-        'https://stevenzps.duckdns.org'
-      ),
-    ];
-    for (const handler of handlers) {
-      handler.mount(app);
-    }
-
     const router: express.Router = express.Router();
 
     /* Mount REST API routes */
@@ -54,12 +43,23 @@ class App {
 
     app.get('*', (req, res) => {
       res.status(404).send({
-        message: 'Route not found',
+        message: 'Route not found!',
       });
     });
     return app;
   }
   run(app: express.Express) {
+    const handlers = [
+      new TrelloWebhookAuthHandler(
+        '/api/trello',
+        this.config.trelloApiKey.oauthSecret,
+        'https://stevenzps.duckdns.org'
+      ),
+    ];
+    for (const handler of handlers) {
+      handler.mount(app);
+    }
+
     app.listen(this.config.port, () => {
       console.log(`Server is listening on ${this.config.port}`);
     });

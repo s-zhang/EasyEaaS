@@ -57,9 +57,11 @@ class TrelloClient implements ITrelloClient {
   ): Promise<void> {
     const url = `${this.trelloEndpoint}/cards/${cardId}/customField/${customFieldId}/item?${this.trelloAuthParams}`;
     console.log(`TrelloClient: PUT ${url}`);
-    await axios.put(url, {
-      value: value,
-    });
+    const body = {
+      value: value ?? '',
+    };
+    console.log(`TrelloClient: body: ${JSON.stringify(body, null, 4)}`);
+    await axios.put(url, body);
   }
   async getCustomFieldsForBoard(boardId: string): Promise<CustomField[]> {
     const url = `${this.trelloEndpoint}/boards/${boardId}/customFields?${this.trelloAuthParams}`;

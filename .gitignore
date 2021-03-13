@@ -9,3 +9,4 @@ coverage
 *.log
 yarn.lock
 dist
+/app_config_local.json
