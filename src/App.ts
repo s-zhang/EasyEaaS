@@ -57,11 +57,12 @@ class App {
 
     app.use('/api', router);
 
-    app.get('*', (req, res) => {
+    app.all('*', (req, res) => {
       res.status(404).send({
         message: 'Route not found!',
       });
     });
+
     return app;
   }
   run(app: express.Express) {

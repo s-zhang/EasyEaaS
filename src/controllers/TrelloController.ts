@@ -153,7 +153,7 @@ class TrelloController implements IController {
       this.boardWebhookListener(req, res)
     );
     router.post(
-      '/trello/update_days_active',
+      '/butler_trello/update_days_active',
       asyncHandler(async (req, res) => {
         await this.updateAllCardsDaysActive(req.query.boardId as string);
         res.sendStatus(200);
