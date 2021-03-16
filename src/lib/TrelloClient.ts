@@ -1,4 +1,5 @@
 import axios from 'axios';
+import axiosBetterStacktrace from 'axios-better-stacktrace';
 
 import TrelloConfig from '../models/TrelloConfig';
 import {
@@ -9,6 +10,8 @@ import {
   List,
   Value,
 } from '../models/TrelloModels';
+
+axiosBetterStacktrace(axios);
 
 interface ITrelloClient {
   moveCardToList(cardId: string, listId: string): Promise<void>;

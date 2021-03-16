@@ -48,6 +48,7 @@
   "dependencies": {
     "@bitauth/libauth": "^1.17.1",
     "axios": "^0.21.1",
+    "axios-better-stacktrace": "^2.1.1",
     "body-parser": "^1.19.0",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
@@ -55,7 +56,8 @@
     "fs": "0.0.1-security",
     "helmet": "^4.1.1",
     "luxon": "^1.25.0",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "source-map-support": "^0.5.19"
   },
   "devDependencies": {
     "@ava/typescript": "^1.1.1",

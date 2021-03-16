@@ -1,10 +1,11 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   mode: 'production',
   entry: './src/index.ts',
   target: 'node',
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -28,4 +29,11 @@ module.exports = {
       return RegExp('node_modules/express/lib/view.js').test(warning);
     },
   },
+  plugins: [
+    new webpack.BannerPlugin({
+      banner: 'require("source-map-support").install();',
+      raw: true,
+      entryOnly: false
+    }),
+  ],
 };

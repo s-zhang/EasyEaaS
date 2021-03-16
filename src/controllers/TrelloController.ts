@@ -154,9 +154,10 @@ class TrelloController implements IController {
     );
     router.post(
       '/trello/update_days_active',
-      asyncHandler((req) =>
-        this.updateAllCardsDaysActive(req.query.boardId as string)
-      )
+      asyncHandler(async (req, res) => {
+        await this.updateAllCardsDaysActive(req.query.boardId as string);
+        res.sendStatus(200);
+      })
     );
     router.post('/trello/echo', this.echo);
   }
