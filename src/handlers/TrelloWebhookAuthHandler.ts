@@ -2,9 +2,9 @@ import crypto from 'crypto';
 
 import { NextFunction, Request, Response } from 'express';
 
-import AuthHandler from './AuthHandler';
+import Handler from './Handler';
 
-class TrelloWebhookAuthHandler extends AuthHandler {
+class TrelloWebhookAuthHandler extends Handler {
   private readonly secret: string;
   private readonly baseUrl: string;
   constructor(path: string, secret: string, baseUrl: string) {

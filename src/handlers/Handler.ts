@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 
-abstract class AuthHandler {
+abstract class Handler {
   protected readonly path: string;
   protected constructor(path: string) {
     this.path = path;
@@ -20,4 +20,4 @@ abstract class AuthHandler {
   }
 }
 
-export default AuthHandler;
+export default Handler;
