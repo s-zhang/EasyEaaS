@@ -1,7 +1,11 @@
 import fs from 'fs';
 
+import sms from 'source-map-support';
+
 import App from './App';
 import AppConfig from './models/AppConfig';
+
+sms.install();
 
 const appConfigPath = process.argv[2];
 

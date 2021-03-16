@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = {
   mode: 'production',
@@ -29,11 +28,4 @@ module.exports = {
       return RegExp('node_modules/express/lib/view.js').test(warning);
     },
   },
-  plugins: [
-    new webpack.BannerPlugin({
-      banner: 'require("source-map-support").install();',
-      raw: true,
-      entryOnly: false
-    }),
-  ],
 };
