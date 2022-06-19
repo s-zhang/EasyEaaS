@@ -28,7 +28,6 @@ jobs:
         npm run test
         npm run dist
         npm run cov:send
-        npm run cov:check
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v3
