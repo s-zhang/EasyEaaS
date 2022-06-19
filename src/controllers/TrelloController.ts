@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Request, Response, Router } from 'express';
 import asyncHandler from 'express-async-handler';
-import { DateTime } from 'luxon';
+import { DateTime, Duration } from 'luxon';
 
 import { ITimeUtils } from '../lib/TimeUtils';
 import { ITrelloClient } from '../lib/TrelloClient';
@@ -111,26 +111,109 @@ class TrelloController implements IController {
   }
 
   async updateAllCardsDaysActive(boardId: string): Promise<void> {
-    const activeDateField = await this.trelloClient.getCustomFieldsByName(
+    const activeDateFieldId = await this.trelloClient.getCustomFieldIdByName(
       boardId,
       'Active Date'
     );
-    const daysActiveField = await this.trelloClient.getCustomFieldsByName(
+    const daysActiveFieldId = await this.trelloClient.getCustomFieldIdByName(
       boardId,
       'DA'
     );
 
     const lists = await this.trelloClient.getLists(boardId);
     for (const list of lists) {
+      if (list.name.endsWith('[M]')) {
+        // Skip any lists marked [M] as in Meta
+        continue;
+      }
       const cards = await this.trelloClient.getCards(list.id);
       for (const card of cards) {
         const activeDate = await this.trelloClient.getCustomFieldValueById<
           DateTime
-        >(card.id, activeDateField!.id, this.timeUtils.fromISO);
+        >(card.id, activeDateFieldId, this.timeUtils.fromISO);
         await this.updateDaysActiveIfNeeded(
           card.id,
           activeDate,
-          daysActiveField!.id
+          daysActiveFieldId
+        );
+      }
+    }
+  }
+
+  async updateRepeatingCards(boardId: string): Promise<void> {
+    const recurringCardsList = await this.trelloClient.getListByName(
+      boardId,
+      'Repeats [M]'
+    );
+    if (!recurringCardsList) {
+      return;
+    }
+
+    const nextRepeatFieldId = await this.trelloClient.getCustomFieldIdByName(
+      boardId,
+      'Next Repeat'
+    );
+    const repeatEveryFieldId = await this.trelloClient.getCustomFieldIdByName(
+      boardId,
+      'Repeat Every'
+    );
+    const repeatListFieldId = await this.trelloClient.getCustomFieldIdByName(
+      boardId,
+      'Repeat List'
+    );
+
+    const recurringCards = await this.trelloClient.getCards(
+      recurringCardsList.id
+    );
+    for (const recurringCard of recurringCards) {
+      const nextRepeatDate = await this.trelloClient.getCustomFieldValueById<
+        DateTime
+      >(recurringCard.id, nextRepeatFieldId, this.timeUtils.fromISO);
+      console.log(`Next repeat date ${nextRepeatDate}`);
+      if (
+        nextRepeatDate &&
+        nextRepeatDate.startOf('day') <= this.timeUtils.local().startOf('day')
+      ) {
+        // If next repeat date is same as today's date
+
+        const repeatListName = await this.trelloClient.getCustomFieldValueById<
+          string
+        >(recurringCard.id, repeatListFieldId, (s) => s);
+        if (!repeatListName) {
+          console.log(
+            `Recurring card [${recurringCard.name}] does not have Repeat List field defined!`
+          );
+          continue;
+        }
+        const repeatList = await this.trelloClient.getListByName(
+          boardId,
+          repeatListName
+        );
+
+        this.trelloClient.copyCard(recurringCard.id, repeatList!.id);
+
+        const repeatEvery = await this.trelloClient.getCustomFieldValueById<
+          Duration
+        >(
+          recurringCard.id,
+          repeatEveryFieldId,
+          this.timeUtils.durationFromString
+        );
+        if (!repeatEvery) {
+          console.log(
+            `Recurring card [${recurringCard.name}] does not have Repeat Every field defined!`
+          );
+          continue;
+        }
+
+        const nextNextRepeatDate = nextRepeatDate.plus(repeatEvery);
+
+        await this.trelloClient.updateCustomFieldItemOnCard(
+          recurringCard.id,
+          nextRepeatFieldId,
+          {
+            date: nextNextRepeatDate.toISO(),
+          }
         );
       }
     }
@@ -156,6 +239,13 @@ class TrelloController implements IController {
       '/butler_trello/update_days_active',
       asyncHandler(async (req, res) => {
         await this.updateAllCardsDaysActive(req.query.boardId as string);
+        res.sendStatus(200);
+      })
+    );
+    router.post(
+      '/butler_trello/update_repeats',
+      asyncHandler(async (req, res) => {
+        await this.updateRepeatingCards(req.query.boardId as string);
         res.sendStatus(200);
       })
     );

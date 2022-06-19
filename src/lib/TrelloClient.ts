@@ -15,7 +15,13 @@ axiosBetterStacktrace(axios);
 
 interface ITrelloClient {
   moveCardToList(cardId: string, listId: string): Promise<void>;
+  copyCard(
+    fromCardId: string,
+    toListId: string,
+    propertiesToCopy?: string
+  ): Promise<void>;
   getLists(boardId: string): Promise<List[]>;
+  getListByName(boardId: string, name: string): Promise<List | undefined>;
   getCards(listId: string): Promise<Card[]>;
   updateCustomFieldItemOnCard(
     cardId: string,
@@ -27,6 +33,7 @@ interface ITrelloClient {
     boardId: string,
     name: string
   ): Promise<CustomField | undefined>;
+  getCustomFieldIdByName(boardId: string, name: string): Promise<string>;
   getCustomFieldItemsOnCard(cardId: string): Promise<CustomFieldItems[]>;
   getCustomFieldValueById<T>(
     cardId: string,
@@ -52,6 +59,20 @@ class TrelloClient implements ITrelloClient {
     await axios.put(url, {
       idList: listId,
     });
+  }
+  async copyCard(
+    fromCardId: string,
+    toListId: string,
+    propertiesToCopy = 'attachments,checklists,comments,due,start,labels,members,stickers'
+  ): Promise<void> {
+    const url = `${this.trelloEndpoint}/cards?idList=${toListId}&${this.trelloAuthParams}`;
+    console.log(`TrelloClient: POST ${url}`);
+    const body = {
+      idCardSource: fromCardId,
+      keepFromSource: propertiesToCopy,
+    };
+    console.log(`TrelloClient: body: ${JSON.stringify(body, null, 4)}`);
+    await axios.post(url, body);
   }
   async updateCustomFieldItemOnCard(
     cardId: string,
@@ -84,6 +105,15 @@ class TrelloClient implements ITrelloClient {
       }
     }
     return fieldWithName;
+  }
+  async getCustomFieldIdByName(boardId: string, name: string): Promise<string> {
+    const field = await this.getCustomFieldsByName(boardId, name);
+    if (!field) {
+      throw new Error(
+        `Custom field with ${name} does not exist in board ${boardId}`
+      );
+    }
+    return field.id;
   }
   async getCustomFieldItemsOnCard(cardId: string): Promise<CustomFieldItems[]> {
     const url = `${this.trelloEndpoint}/cards/${cardId}/customFieldItems?${this.trelloAuthParams}`;
@@ -126,6 +156,13 @@ class TrelloClient implements ITrelloClient {
     console.log(`TrelloClient: GET ${url}`);
     const response = await axios.get<List[]>(url);
     return response.data;
+  }
+  async getListByName(
+    boardId: string,
+    name: string
+  ): Promise<List | undefined> {
+    const lists = await this.getLists(boardId);
+    return lists.find((list) => list.name === name);
   }
   async getCards(listId: string): Promise<Card[]> {
     const url = `${this.trelloEndpoint}/lists/${listId}/cards?${this.trelloAuthParams}`;

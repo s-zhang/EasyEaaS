@@ -8,16 +8,17 @@ import TrelloController from './TrelloController';
 
 const controller = new TrelloController(
   new TrelloClient(
-    new TrelloConfig(
-      '<replace_with_real>',
-      '<replace_with_real>',
-      '<replace_with_real>'
-    )
+    new TrelloConfig('dummy_value', 'dummy_value', 'dummy_value')
   ),
   new TimeUtils()
 );
 
 test('TestTrelloUpdateDaysActive', async (t) => {
   await controller.updateAllCardsDaysActive('5ffe15d6fb57611385417155');
+  t.pass();
+});
+
+test('TestTrelloUpdateRepeats', async (t) => {
+  await controller.updateRepeatingCards('5ffe15d6fb57611385417155');
   t.pass();
 });
