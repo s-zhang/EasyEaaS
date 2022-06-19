@@ -27,13 +27,14 @@ jobs:
         npm install
         npm run test
         npm run dist
-        npm run cov:send
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v3
       with:
         name: app
-        path: .
+        path: |
+          ./dist/
+          deploy.sh
 
   deploy:
     permissions:
