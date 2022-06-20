@@ -67,7 +67,7 @@ jobs:
         username: szh10000
         key: ${{ secrets.GCP_INSTANCE1_SSH_KEY }}
         source: ./*
-        target: ${{ github.env.TARGET_DEPLOY_DIR }}/test1
+        target: ~/deploy/EasyEaaS/test1
 #    - name: Start New Version
 #      uses: appleboy/ssh-action@v0.1.4
 #      with:
