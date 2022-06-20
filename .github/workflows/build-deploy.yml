@@ -32,9 +32,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: app
-        path: |
-          ./dist/
-          deploy.sh
+        path: ./dist
 
   deploy:
     permissions:
@@ -49,3 +47,10 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: app
+    - name: Deploy to GCP
+      uses: appleboy/ssh-action@v0.1.4
+      with:
+        host: stevenzps.duckdns.org
+        username: szh10000
+        key: ${{ secrets.GCP_INSTANCE1_SSH_KEY }}
+        script: whoami
