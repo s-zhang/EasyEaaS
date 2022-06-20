@@ -49,17 +49,17 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: app
-#    - name: Stop and Remove Current Version
-#      uses: appleboy/ssh-action@v0.1.4
-#      with:
-#        host: stevenzps.duckdns.org
-#        username: szh10000
-#        key: ${{ secrets.GCP_INSTANCE1_SSH_KEY }}
-#        script: |
-#          cd ~/docker
-#          docker-compose kill easyeaas
-#          rm -rf $TARGET_DEPLOY_DIR/*
-#          mkdir $TARGET_DEPLOY_DIR
+    - name: Stop and Remove Current Version
+      uses: appleboy/ssh-action@v0.1.4
+      with:
+        host: stevenzps.duckdns.org
+        username: szh10000
+        key: ${{ secrets.GCP_INSTANCE1_SSH_KEY }}
+        script: |
+          cd ~/docker
+          docker-compose kill easyeaas
+          rm -rf $TARGET_DEPLOY_DIR/*
+          mkdir $TARGET_DEPLOY_DIR
     - name: Copy Build Over
       uses: appleboy/scp-action@v0.1.3
       with:
@@ -67,13 +67,13 @@ jobs:
         username: szh10000
         key: ${{ secrets.GCP_INSTANCE1_SSH_KEY }}
         source: ./*
-        target: ~/deploy/EasyEaaS/test1
-#    - name: Start New Version
-#      uses: appleboy/ssh-action@v0.1.4
-#      with:
-#        host: stevenzps.duckdns.org
-#        username: szh10000
-#        key: ${{ secrets.GCP_INSTANCE1_SSH_KEY }}
-#        script: |
-#          cd ~/docker
-#          docker-compose up easyeaas
+        target: ~/deploy/EasyEaaS
+    - name: Start New Version
+      uses: appleboy/ssh-action@v0.1.4
+      with:
+        host: stevenzps.duckdns.org
+        username: szh10000
+        key: ${{ secrets.GCP_INSTANCE1_SSH_KEY }}
+        script: |
+          cd ~/docker
+          docker-compose up easyeaas
